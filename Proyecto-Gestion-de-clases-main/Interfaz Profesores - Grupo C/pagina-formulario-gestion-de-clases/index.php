@@ -56,20 +56,7 @@ date_default_timezone_set('America/Buenos_Aires');
   <main>
     
     <div class="contenedor-bienvenida-msg">
-      <p>¡Bienvenido
-        <?php
-        $query_welcome = "SELECT NOMBRE_PERSONA, APELLIDO_PERSONA, CARGO FROM PERSONAS WHERE CARGO = 'Profesor'";
-        $res_welcome = mysqli_query($conn, $query_welcome);
-        if ($res_welcome) {
-          $fila_welcome = mysqli_fetch_assoc($res_welcome);
-        ?>
-          <?php echo $fila_welcome['NOMBRE_PERSONA'] . " " . $fila_welcome['APELLIDO_PERSONA']; ?>! <span style="font-weight: bold; color:darkorange;">(<?php echo $fila_welcome['CARGO']; ?>)</span></p>
-    <?php
-        } else {
-          echo "Hubo un error al hacer la consulta de Bienvenida: " . mysqli_error($conn);
-        }
-    ?>
-
+      <?php  bienvenida($conn) ?>
     </div>
 
 
@@ -232,3 +219,23 @@ function mostrarDatos($result)
     }
   }
 ?>
+
+<?php
+  function bienvenida($conn){
+    $query_welcome = "SELECT NOMBRE_PERSONA, APELLIDO_PERSONA, CARGO FROM PERSONAS WHERE CARGO = 'Profesor'";
+    $res_welcome = mysqli_query($conn, $query_welcome);
+    ?>
+    <p class="msg-bienvenida">
+        <?php
+        if ($res_welcome) {
+          $fila_welcome = mysqli_fetch_assoc($res_welcome);
+        ?>
+        <?php echo "¡Bienvenido " . $fila_welcome['NOMBRE_PERSONA'] . " " . $fila_welcome['APELLIDO_PERSONA']; ?>! <span style="font-weight: bold; color:darkorange;">(<?php echo $fila_welcome['CARGO']; ?>)</span></p> 
+        <?php
+        } 
+        else {
+          echo "Hubo un error al hacer la consulta de Bienvenida: " . mysqli_error($conn);
+        }
+  }
+?>
+

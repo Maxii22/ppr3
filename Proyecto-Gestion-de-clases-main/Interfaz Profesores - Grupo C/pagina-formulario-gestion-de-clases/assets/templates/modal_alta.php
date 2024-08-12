@@ -18,7 +18,6 @@ if (session_status() === PHP_SESSION_NONE) {
     <h2 class="modal__title">Alta de Clase</h2>
 
     <form method="post">
-      <div class="form-labels">
 
         <label for="materia-id">
           Materia
@@ -75,7 +74,6 @@ if (session_status() === PHP_SESSION_NONE) {
         <input type="file" class="form-control" name="archivo" id="file-id" placeholder="" aria-describedby="fileHelpId" />
 
 
-      </div>
 
       <input type="submit" name="btn_Añadir" value="Añadir" class="btn_añadir">
 

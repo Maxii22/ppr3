@@ -33,8 +33,9 @@ li {
   margin: 0;
 }
 
+/* --- Header Section --- */
 header {
-  padding: 20px 0;
+  padding: 20px 10px;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -53,16 +54,13 @@ header {
   align-items: center;
   flex-direction: row;
   gap: 15px;
-
 }
 
 #nav-bar li {
   background: rgb(62, 66, 100);
   padding: 5px 10px;
   border-radius: 8px;
-  border: 1px solid transparent;
-  font-size: 14px;
-
+  font-size: clamp(0.7rem, 3.7vw, 1rem)
 }
 
 #nav-bar .nav-links {
@@ -72,7 +70,7 @@ header {
 
 #nav-bar li:hover {
   background: rgb(30, 31, 46);
-  border: 1px solid #7e7e7e;
+  outline: 1px solid #7e7e7e;
 }
 
 .contenedor-bienvenida-msg {
@@ -84,23 +82,11 @@ header {
   font-size: 20px;
 }
 
-/* .msg-alta-success{
-padding: 5px 10px;
-margin: 10px 0px;
-background-color: rgb(141, 190, 141);
-color: #000;
-border-radius: 8px;
+.msg-bienvenida{
+  text-wrap: nowrap;
+  font-size: clamp(1rem, 5.7vw, 1.4rem);
 }
 
-.btn-close-msg-alta {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  background-color: #000!important;
-  padding: 5px 10px!important;
-  color: #fff;
-} */
 
 /* Seccion menu de administrador */
 main {
