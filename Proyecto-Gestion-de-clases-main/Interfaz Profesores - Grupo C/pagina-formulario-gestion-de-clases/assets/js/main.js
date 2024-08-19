@@ -1,5 +1,5 @@
 
-import { fn_button_alta, fn_button_modificacion, fn_button_baja } from "./app.js"
+import { $checkboxModifyDelete,fn_button_alta, fn_button_modificacion, fn_button_baja } from "./app.js"
 
 const d = document
 
@@ -11,69 +11,62 @@ d.addEventListener("DOMContentLoaded", () => {
   const $btnAlta = d.getElementById("id-btn-alta")
   const $btnModificar = d.getElementById("id-btn-modificar")
   const $btnBaja = d.getElementById("id-btn-baja")
-  const $checkboxModifyDelete = d.querySelectorAll(".input-checkbox-register");
 
-  // inhabilitar o habilitar btn-baja:
-  var acumuladorBaja = 0;
-  var acumuladorModif = 0;
-  var array = [];
+  let clasesSeleccionadas = [];
 
-  for (let i = 0; i < $checkboxModifyDelete.length; i++) {
-    $checkboxModifyDelete[i].addEventListener("click", (e) => {
-      // e.preventDefault()
-      $btnBaja.removeAttribute('disabled');
-      $btnModificar.removeAttribute('disabled');
 
-      if ($checkboxModifyDelete[i].checked) {
-        acumuladorBaja++;
-        acumuladorModif++;
-        if (acumuladorBaja >= 1 && acumuladorModif == 1) {
-          array[i] = $checkboxModifyDelete[i].value;
-          // console.log('Checkbox seleccionado: ' + array[i]);
-          console.log('Checkbox seleccionado. \nClase: ' + $checkboxModifyDelete[i].id + '\nValor: ' + $checkboxModifyDelete[i].value);
-        }
-        else if (acumuladorBaja >= 1 && acumuladorModif != 1) {
-          $btnModificar.setAttribute('disabled', "true");
-          array[i] = $checkboxModifyDelete[i].value;
-          // console.log('Checkbox seleccionado: ' + array[i]);
-          console.log('Checkbox seleccionado. \nClase: ' + $checkboxModifyDelete[i].id + '\nValor: ' + $checkboxModifyDelete[i].value);
-        }
-      } else {
-        acumuladorBaja--;
-        acumuladorModif--;
-        array.splice(i, 1); // elimino del array el valor del chechbox indicado.
-        console.log('Checkbox Deseleccionado. \nClase: ' + $checkboxModifyDelete[i].id + '\nValor: ' + $checkboxModifyDelete[i].value);
-        if (acumuladorBaja == 0) {
-          $btnBaja.setAttribute('disabled', "true");
-        }
-        if (acumuladorModif == 0) {
-          $btnModificar.setAttribute('disabled', "true");
+  function estadoBtns() {
+    const acumuladorBaja = clasesSeleccionadas.length > 0;
+    const acumuladorModif = clasesSeleccionadas.length === 1 ;
+  
+    $btnBaja.disabled = !acumuladorBaja;
+    $btnModificar.disabled = !acumuladorModif;
+  }
+
+
+  $checkboxModifyDelete.forEach(checkbox => {
+    checkbox.addEventListener('change', (e) => {
+      const id_clase = checkbox.value;
+      if(checkbox.checked){
+        if(!clasesSeleccionadas.includes(id_clase)) {  //Verifica si el ID del checkbox no esta en el array clasesSeleccionadas
+          clasesSeleccionadas.push(id_clase);  // Si no esta en el array , lo agrega
         }
       }
+      else {
+        clasesSeleccionadas = clasesSeleccionadas.filter(clases_seleccionadas => clases_seleccionadas !== id_clase);  //Actualiza el array quitando los checkbox que se deseleccionaron
+      }
+
+      estadoBtns();
 
       // Convertir array a JSON y enviarlo al servidor
-      var arrayJSON = JSON.stringify(array)
+      var arrayJSON = JSON.stringify(clasesSeleccionadas)
       fetch('peticion_POST.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+         headers: {
+           'Content-Type': 'application/json'
+         },
         body: JSON.stringify({ arrayJSON: arrayJSON })
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok')
-          }
+       })
+         .then(response => {
+           if (!response.ok) {
+           throw new Error('Network response was not ok')
+           }
           return response.text()
-        })
+       })
         .then(data => {
-          console.log(data)
+         console.log(data)
         })
         .catch(error => {
           console.error('Hubo un problema con el fetching de datos:', error)
-        });
+       });
+    
     });
-  }
+  });
+
+
+
+     
+  
 
   fn_button_alta($btnAlta, $closeModal)
   fn_button_modificacion($btnModificar, $closeModal3)

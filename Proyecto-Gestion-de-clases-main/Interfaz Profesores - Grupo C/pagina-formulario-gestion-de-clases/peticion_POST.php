@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (session_status() === PHP_SESSION_NONE) {
       session_start();
     }
-    $_SESSION['NUMBER_CHECKBOX'] = $array;
+    $_SESSION['CLASES_SELECCIONADAS'] = $array;
     
     echo "Datos recibidos correctamente en peticion_POST.php";
   } else {

@@ -3,8 +3,10 @@ const d = document;
 const $modal = d.querySelector(".modal"); // Variable global
 const $modal2 = d.querySelector(".modal2"); // Variable global
 const $modal3 = d.querySelector(".modal3"); // Variable global
-const fondo_modal = document.querySelector(".modal__container");
-const inputs_modal = document.querySelectorAll(".inputs-form-alta");
+const $checkboxModifyDelete = document.querySelectorAll(".input-checkbox-register");
+export { $checkboxModifyDelete };
+
+
 
 export const fn_button_alta = (openModalAlta, closeModalAlta) => {
   openModalAlta.addEventListener("click", (e) => {
@@ -17,18 +19,72 @@ export const fn_button_alta = (openModalAlta, closeModalAlta) => {
   closeModalAlta.addEventListener("click", (e) => {
     // e.preventDefault();
     $modal.classList.remove("modal--show");
-    const bad = document.querySelector(".bad");
-    fondo_modal.style.borderColor = "white";
-    for (let i = 0; i < inputs_modal.length; i++) {
-      inputs_modal[i].style.borderColor = "white";
-    }
-    bad.style.display = "none";
+  
   })
 }
 
 export const fn_button_modificacion = (openModalModificacion, closeModalModificacion) => {
   openModalModificacion.addEventListener("click", (e) => {
+    const opcion_materia = document.querySelector('#op-principal-materia');
+    const opcion_comision = document.querySelector('#op-principal-comision');
+    const campo_aula = document.querySelector('#new-aula-id');
+    const opcion_hora = document.querySelector('#op-principal-hora');
+    const campo_fecha = document.querySelector('#new-fecha-id');
+    const campo_temas = document.querySelector('#temas-id');
+    const campo_novedad = document.querySelector('#novedad-id');
+    const campo_archivo = document.querySelector('#archivo_actual');
+
     // e.preventDefault()
+    opcion_materia.innerHTML = ''; 
+    opcion_materia.value = '';
+    opcion_comision.innerHTML = '';
+    opcion_comision.value = '';
+    campo_aula.innerHTML = '';
+    campo_aula.value = '';
+    opcion_hora.innerHTML = '';
+    opcion_hora.value = '';
+    campo_fecha.innerHTML = '';
+    campo_fecha.value = '';
+    campo_temas.innerHTML = '';
+    campo_temas.value = '';
+    campo_novedad.innerHTML = '';
+    campo_novedad.value = '';
+    campo_archivo.innerHTML = '';
+    campo_archivo.value = '';
+
+    $checkboxModifyDelete.forEach(checkbox => {
+      if (checkbox.checked) {
+          const id_clase = checkbox.value;
+          const row = checkbox.closest('tr');
+          const codigo_materia = row.cells[1].textContent; 
+          const nombre_materia = row.cells[2].textContent; 
+          const comision = row.cells[3].textContent; 
+          const aula = row.cells[4].textContent; 
+          const hora = row.cells[5].textContent; 
+          const fecha = row.cells[6].textContent; 
+          const temas = row.cells[7].textContent; 
+          const novedades = row.cells[8].textContent; 
+          const archivos = row.cells[9].textContent; 
+
+          opcion_materia.innerHTML = `${nombre_materia}`;
+          opcion_materia.value= `${codigo_materia}`;
+          opcion_comision.innerHTML = `${comision}`;
+          opcion_comision.value= `${comision}`;
+          campo_aula.innerHTML = `${aula}`;
+          campo_aula.value = `${aula}`;
+          opcion_hora.innerHTML = `${hora}`;
+          opcion_hora.value = `${hora}`;
+          campo_fecha.innerHTML = `${fecha}`;
+          campo_fecha.value = `${fecha}`;
+          campo_temas.innerHTML = `${temas}`;
+          campo_temas.value = `${temas}`;
+          campo_novedad.innerHTML = `${novedades}`;
+          campo_novedad.value = `${novedades}`;
+          campo_archivo.innerHTML = `${archivos}`;
+          campo_archivo.value = `${archivos}`;
+      }
+  });
+
     $modal3.classList.add("modal3--show")
   });
 
@@ -40,8 +96,39 @@ export const fn_button_modificacion = (openModalModificacion, closeModalModifica
 }
 
 export const fn_button_baja = (openModalBaja, closeModalBaja) => {
+  const table_modal_baja = document.querySelector('#table_modal_baja tbody');
+
   openModalBaja.addEventListener("click", (e) => {
     // e.preventDefault()
+    table_modal_baja.innerHTML = ''; // Limpiar la tabla del modal
+
+    $checkboxModifyDelete.forEach(checkbox => {
+      if (checkbox.checked) {
+          const id_clase = checkbox.value;
+          const row = checkbox.closest('tr');
+          const materia = row.cells[2].textContent; 
+          const comision = row.cells[3].textContent; 
+          const aula = row.cells[4].textContent; 
+          const hora = row.cells[5].textContent; 
+          const fecha = row.cells[6].textContent; 
+          const temas = row.cells[7].textContent; 
+          const novedades = row.cells[8].textContent; 
+          const archivos = row.cells[9].textContent; 
+
+          const newRow = document.createElement('tr');
+          newRow.innerHTML = `
+          <td>${materia}</td>
+          <td>${comision}</td> 
+          <td>${aula}</td> 
+          <td>${hora}</td>  
+          <td>${fecha}</td>  
+          <td>${temas}</td>  
+          <td>${novedades}</td> 
+          <td>${archivos} </td>`;
+          table_modal_baja.appendChild(newRow);
+      }
+  });
+
     $modal2.classList.add("modal2--show")
   })
 
@@ -54,11 +141,6 @@ export const fn_button_baja = (openModalBaja, closeModalBaja) => {
 }
 
 
-// Si no marqué ningun input checkbox, el botón de modificar debe estar inhabilitado
-// Si marqué varios input checkbox, el botón de modificar debe estar inhabilitado, ya que solo se puede modificar 1 solo a la vez
-// Si marqué un input checkbox, el botón de modificar se habilita y se podrá visualizar un formulario con esos mismos datos para poder editarlos.
-const checkbox_modificar = (btnCheckModificar) => { /* TODO: Code here */ }
 
-// Si no marqué ningún input checkbox, el botón de dar de baja debe estar inhabilitado
-// Si marqué uno o varios input checkbox, el botón de dar de baja se habilita y saldrá un mensaje de alerta el cual mostrará los registros que se quieran eliminar y un botón de 'confirmar baja'
-const checkbox_baja = (btnCheckBaja) => { /* TODO: Code here */ }
+
+

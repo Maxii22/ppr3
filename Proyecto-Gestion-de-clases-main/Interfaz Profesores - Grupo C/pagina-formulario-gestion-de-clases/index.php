@@ -1,5 +1,6 @@
 <?php
 include("assets/php/conexion.php");
+include("assets/php/funciones.php");
 // Verificar si la sesión ya está activa
 if (session_status() === PHP_SESSION_NONE) {
   session_start(); // Iniciar la sesión si no está activa
@@ -30,7 +31,7 @@ date_default_timezone_set('America/Buenos_Aires');
 </head>
 
 <body>
-  <header>
+  <header id="header">
     <p class="name-page">Gestión de Clases</p>
     <nav id="nav-bar">
       <ul>
@@ -51,10 +52,28 @@ date_default_timezone_set('America/Buenos_Aires');
   <?php include("assets/templates/modal_modificacion.php"); ?>
   <?php include("assets/templates/modal_baja.php"); ?>
 
+  <?php 
+  if (isset($_SESSION['message'])) {
+    $message = $_SESSION['message'];
+    unset($_SESSION['message']); 
+
+  if ( $message['type'] == 'error') {
+  ?>
+  <script>
+  const $modal = document.querySelector(".modal"); 
+  const bad = document.querySelector(".bad");
+  $modal.classList.add("modal--show");
+  bad.style.display = "block";
   
+  </script>
+  <?php
+  }
+ 
+}
+?>
 
   <main>
-    
+
     <div class="contenedor-bienvenida-msg">
       <?php  bienvenida($conn) ?>
     </div>
@@ -125,117 +144,8 @@ date_default_timezone_set('America/Buenos_Aires');
 </html>
 
 
-<?php
-function mostrarDatos($result)
-{
-  if (isset($result) && $result->num_rows > 0) {
-    $id_clase_chkbx = null;
-    while ($fila = mysqli_fetch_array($result)) {
-      $id_clase_chkbx = $fila['ID_CLASE'];
-      $_SESSION['NUMBER_CHECKBOX'] = $id_clase_chkbx;
-?>
-      <tr>
-        <td class="columna-checkbox" ><input class="input-checkbox-register" id="chkbx-<?php echo $id_clase_chkbx; ?>" type="checkbox" name="seleccionar_registro" value="<?php echo $id_clase_chkbx; ?>"></td>
-        <!-- <td><php echo $fila['TITULO_ABREVIADO']; ?></td> -->
-        <td><?php echo $fila['NOMBRE_MATERIA']; ?></td>
-        <td><?php echo $fila['COMISION']; ?></td>
-        <td><?php echo $fila['AULA']; ?></td>
-        <td><?php echo $fila['HORA']; ?></td>
-        <td><?php echo $fila['FECHA']; ?></td>
-        <td><textarea class="td_textarea" rows="1" readonly><?php echo $fila['TEMAS']; ?></textarea></td>
-        <td><textarea class="td_textarea" rows="1" readonly><?php echo $fila['NOVEDADES']; ?></textarea></td>
-        <td><?php echo $fila['ARCHIVOS']; ?></td>
-      </tr>
-      
-      
-      <?php
-      ?>
-      <!-- Script para manejar el evento del checkbox. Para visualizar problemas futuros. -->
-      <!-- <script>
-        let checkbox<?php echo $id_clase_chkbx; ?> = document.getElementById("chkbx-<?php echo $id_clase_chkbx; ?>")
-        if (checkbox<?php echo $id_clase_chkbx; ?>) {
-          checkbox<?php echo $id_clase_chkbx; ?>.addEventListener("click", () => console.log(checkbox<?php echo $id_clase_chkbx; ?>));
-        } else {
-          console.warn("Checkbox no encontrado para ID <?php echo $id_clase_chkbx; ?>")
-        }
-      </script>  -->
-<?php
-    }
-  } else {
-    echo "<tr><td colspan='9' style='font-size:20px;'>No se encontró ninguna clase registrada...</td></tr>";
-  }
-}
 
-?>
 
-<?php
-  function buscarClases($conn){
-    $consulta = "SELECT materias.NOMBRE_MATERIA, clases.CODIGO_MATERIA
-    FROM clases, usuarios, materias, usuxrol
-    WHERE clases.CODIGO_USUARIO = usuarios.CODIGO_USUARIO
-    AND clases.CODIGO_MATERIA = materias.CODIGO_MATERIA
-    AND usuxrol.CODIGO_USUARIO = clases.CODIGO_USUARIO
-    GROUP BY materias.NOMBRE_MATERIA";
 
-    $res_materia = mysqli_query($conn, $consulta);
-    if ($res_materia->num_rows > 0){
-      while ($fila = $res_materia->fetch_assoc()) {
-    $claseID = $fila['CODIGO_MATERIA'];
-    ?>
-    <label class="contenedor-materia">
-            <input  class="checkLabel" type="checkbox" >
-            <div class="titulo-materia">
-                <b><?php echo $fila['NOMBRE_MATERIA'];  ?></b>
-            </div>
-            <div class="datos-materia">
-              <table>
-                <tbody>
-                <?php
-              $consulta = "SELECT clases.ID_CLASE, clases.CODIGO_USUARIO, usuxrol.CODIGO_ROL,
-              materias.CODIGO_MATERIA, materias.NOMBRE_MATERIA,
-              clases.COMISION, clases.AULA, clases.FECHA, clases.HORA, clases.TEMAS, clases.NOVEDADES,
-              clases.ARCHIVOS
-              FROM clases, usuarios, materias, usuxrol
-              WHERE clases.CODIGO_USUARIO = usuarios.CODIGO_USUARIO
-              AND clases.CODIGO_MATERIA = materias.CODIGO_MATERIA
-              AND clases.CODIGO_MATERIA = $claseID
-              AND usuxrol.CODIGO_USUARIO = clases.CODIGO_USUARIO";
-              $resultado = mysqli_query($conn, $consulta);
-              mostrarDatos($resultado);
-              ?>
-                </tbody>
-              </table>
-            </div>
-        </label>
-    <?php
-      }
-    }
-    else {
-      ?>
-      <table>
-      <tr><td colspan='9' style='font-size:20px;'>No se encontró ninguna clase registrada...</td></tr>
-      </table>
-      <?php
-    }
-  }
-?>
 
-<?php
-  function bienvenida($conn){
-    $query_welcome = "SELECT NOMBRE_PERSONA, APELLIDO_PERSONA, CARGO FROM PERSONAS WHERE CARGO = 'Profesor'";
-    $res_welcome = mysqli_query($conn, $query_welcome);
-    ?>
-    <p class="msg-bienvenida">
-        <?php
-        if ($res_welcome) {
-          $fila_welcome = mysqli_fetch_assoc($res_welcome);
-        ?>
-        <?php echo "¡Bienvenido " . $fila_welcome['NOMBRE_PERSONA'] . " " . $fila_welcome['APELLIDO_PERSONA']; ?>! <span style="font-weight: bold; color:darkorange;">(<?php echo $fila_welcome['CARGO']; ?>)</span></p> 
-        <?php
-        } 
-        else {
-          echo "Hubo un error al hacer la consulta de Bienvenida: " . mysqli_error($conn);
-        }
-  }
-?>
 
